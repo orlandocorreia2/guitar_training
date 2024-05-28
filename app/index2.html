@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Metronome</title>
+  </head>
+  <body>
+    <h1>40 bpm</h1>
+    <input type="range" min="40" max="218" value="40" id="bpm" />
+    <button id="play">Play</button>
+    <audio src="clap.wav"></audio>
+
+    <script>
+      const bpm = document.getElementById("bpm");
+      const h1 = document.querySelector("h1");
+      const play = document.getElementById("play");
+      const audio = document.querySelector("audio");
+
+      let timer = null;
+      let timerHowLongHasItBeenPlaying = 0;
+      let isPlaying = false;
+      let currentBpm = 80;
+      let howLongHasItBeenPlaying = null;
+
+      function tick() {
+        audio.currentTime = 0;
+        audio.play();
+      }
+
+      bpm.addEventListener("change", function () {
+        if (isPlaying) updateCurrentBpm(parseInt(this.value));
+      });
+
+      play.addEventListener("click", function () {
+        isPlaying = !isPlaying;
+        if (isPlaying) {
+          tick();
+          play.innerHTML = "Stop";
+          return updateCurrentBpm(currentBpm);
+        }
+        play.innerHTML = "Play";
+        clearInterval(timer);
+        clearInterval(timerHowLongHasItBeenPlaying);
+      });
+
+      function updateCurrentBpm(value) {
+        if (value > 218) value = 218;
+        h1.innerHTML = `${value} bpm`;
+        bpm.setAttribute("value", value);
+        clearInterval(timer);
+        if (isPlaying) timer = setInterval(tick, (60 * 1000) / value);
+      }
+
+      updateCurrentBpm(currentBpm);
+    </script>
+  </body>
+</html>
